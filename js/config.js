@@ -9,7 +9,7 @@ export const ROLES={SUPER_ADMIN:['*'],GERENCIA:['ACCESS','READ_ALL'],SUPERVISOR:
 export const API={
   // Única API activa: Apps Script del libro de Mantenimiento (Mantenimiento.gs + Seguridad.gs).
   // La URL es pública por naturaleza; no da acceso a nada sin una sesión válida.
-  maintenanceUrl:'https://script.google.com/macros/s/AKfycbx_wDwP3ee6L-ABaRhjh23-JxLWmR3h4x7Itbk4Fl8uQ2oj8MTTo9035vpHFnRvHA/exec'
+  maintenanceUrl:'https://script.google.com/macros/s/AKfycbxt136GZAVg-gBfYcZbyYke49bZ3WjHU3Bxm8Cvu7C3Mui3BoyrM7RcDY8A-F-Szrs/exec'
 };
 
 // Mantenimiento: claves lógicas de las tablas. El servidor traduce cada clave a su hoja.
