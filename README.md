@@ -1,25 +1,21 @@
-# SODIACERO — Sistema Integral de Gestión
+# SODIACERO Campo
 
-Aplicación web estática (HTML, CSS y JavaScript sin compilación) publicada en GitHub Pages.
+Un solo link para capturar información en planta desde el celular: **https://operacionessodiacero.github.io/sistema-gestion/**
 
-## Seguridad
-- Este repositorio es **público**: no contiene contraseñas, claves, tokens ni identificadores de libros.
-- GitHub Pages solo sirve archivos. **Toda autenticación y autorización ocurre en el servidor** (Google Apps Script):
-  inicio de sesión con código de un solo uso enviado al correo registrado, sesiones con vencimiento,
-  validación de cada operación y auditoría.
-- El código del servidor se mantiene fuera de este repositorio.
+- **Tarjetas TPM** roja (mantenimiento planificado) y azul (mantenimiento autónomo), con foto y ficha.
+- **Inventario de equipos**: registro de activos con código automático (SDA-TAL-0001…), estado, criticidad y foto.
 
-## Módulos
-- **Mantenimiento**: inventario y jerarquía de activos, hoja de vida, eventos y cronología de intervención, órdenes de trabajo con horas hombre, repuestos y costos, FMEA y taxonomía de modos de falla, plan preventivo, lecturas operacionales, disponibilidad (Ao, At ISO 14224 y SMRP) e indicadores. Datos en Google Sheets a través de la API segura.
-- **Proyectos** (PMBOK): portafolio de mejora continua interna y proyectos externos, acta de constitución, cronograma tipo Gantt con EDT, dependencias, ruta crítica y línea base, entregables, compromisos, seguimiento con semáforo, riesgos, interesados, control de cambios, lecciones aprendidas y valor ganado (SPI/CPI).
-- **Administración**: usuarios, roles, permisos granulares y auditoría (autorizados en el servidor).
-- **Dashboard gerencial**: resumen en línea de Mantenimiento y Proyectos.
-- **Producción, Calidad, Almacén, Seguridad y Ambiente, Planes de acción**: reservados para etapas posteriores (no guardan datos).
+Los datos se guardan en Google Sheets y Drive a través del Apps Script de la app TPM (la URL y la clave se configuran en **Ajustes**). El **servidor de la empresa** (SODIACERO Gestión 4.0.2 o posterior) consulta la nube cada pocos minutos y guarda una copia en su carpeta de datos; en la app de escritorio se consultan en el menú **Captura móvil**. La nube es solo de captura: lo que se borre de la hoja se conserva en el servidor.
 
 ## Estructura
-```
-index.html · css/ · js/ (app, auth, backend, maintenance/…) · assets/
-```
 
-## Probar localmente
-Servir la carpeta con un servidor HTTP local (por ejemplo, Live Server de VS Code). No requiere compilación.
+| Ruta | Qué es |
+|---|---|
+| `/` (`index.html`, `app.js`, `api.js`, `config.js`, `styles.css`) | App de captura en campo (antes en `tpm-sodiacero`) |
+| `/sig/` | Sistema Integral de Gestión en línea (versión anterior, con su propio Apps Script). Sus funciones están en la app de escritorio 4.0 |
+
+El link anterior `https://operacionessodiacero.github.io/tpm-sodiacero/` redirige aquí y conserva los links de instalación (`#k=CLAVE`). Como las dos direcciones son del mismo sitio, los celulares conservan la clave y el nombre ya guardados.
+
+## Seguridad
+- Este repositorio es **público**: no contiene la clave de acceso. La clave se entrega con el link de instalación (`…/sistema-gestion/#k=CLAVE`) o se escribe en Ajustes.
+- La URL del Apps Script es pública por naturaleza; sin la clave no da acceso a nada.

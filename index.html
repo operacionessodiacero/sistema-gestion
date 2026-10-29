@@ -1,15 +1,223 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#ed1c24">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self' https://script.google.com https://script.googleusercontent.com; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
-<meta name="referrer" content="strict-origin-when-cross-origin"><title>SODIACERO · Sistema Integral de Gestión</title><link rel="stylesheet" href="./css/variables.css"><link rel="stylesheet" href="./css/styles.css"><link rel="stylesheet" href="./css/responsive.css"><link rel="stylesheet" href="./css/maintenance.css"><link rel="stylesheet" href="./css/projects.css"></head><body><section id="bootView" class="login"><div class="login-card" style="text-align:center"><img src="./assets/logo/sodiacero.png" alt="SODIACERO" style="width:170px"><p class="muted">Verificando sesión…</p></div></section>
-<section id="loginView" class="login hidden"><div class="login-card"><div class="brand"><img src="./assets/logo/sodiacero.png" alt="SODIACERO"><div><h1>Sistema Integral de Gestión</h1><p>Acceso seguro</p></div></div><div id="loginMsg" class="login-msg hidden" role="status" aria-live="polite"></div>
-<form id="loginForm" class="hidden" autocomplete="on">
-<div class="field"><label for="loginEmail">Correo electrónico registrado</label><input id="loginEmail" name="email" type="email" autocomplete="email" inputmode="email" maxlength="120" required></div>
-<button class="btn btn-primary" style="width:100%">Enviar código de acceso</button>
-</form>
-<form id="codeForm" class="hidden" autocomplete="off">
-<p class="muted" style="margin:14px 0 0">Enviamos un código de 6 dígitos a <b id="codeEmail"></b>.</p>
-<div class="field"><label for="loginCode">Código de acceso</label><input id="loginCode" name="codigo" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required class="code-input"></div>
-<button class="btn btn-primary" type="submit" style="width:100%">Ingresar</button>
-<div class="toolbar" style="margin-top:10px;justify-content:space-between"><button type="button" class="btn btn-secondary btn-sm" id="resendCode">Reenviar código</button><button type="button" class="btn btn-secondary btn-sm" id="changeEmail">Cambiar correo</button></div>
-</form>
-<div class="demo-note">Acceso sin contraseña: recibirá un código de un solo uso en su correo. Solo los correos autorizados por el administrador pueden ingresar.</div></div></section><section id="appView" class="shell hidden"><aside id="sidebar" class="sidebar"><div class="brand"><img src="./assets/logo/sodiacero.png" alt="SODIACERO"><div><b>SIG</b><p>Gestión integral</p></div></div><nav id="nav" class="nav"></nav></aside><main class="main"><header class="header"><div><button id="hamb" class="btn btn-secondary hamb">☰</button> <b>SODIACERO</b> <span class="muted">· Sistema Integral de Gestión</span></div><div><span id="userName"></span> <button id="logoutBtn" class="btn btn-secondary btn-sm">Salir</button></div></header><div id="content" class="content"></div></main></section><script type="module" src="./js/app.js"></script></body></html>
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>SODIACERO Campo</title>
+  <meta name="description" content="SODIACERO Campo: registro desde el celular de tarjetas TPM e inventario de equipos. Los datos se copian al servidor de la empresa.">
+  <meta name="theme-color" content="#263238">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-color="roja">
+  <header class="topbar">
+    <div class="marca"><b>SODIACERO</b><span>TPM</span></div>
+    <nav class="tabs">
+      <button type="button" data-ir="nueva">Nueva tarjeta</button>
+      <button type="button" data-ir="tarjetas">Tarjetas</button>
+      <button type="button" data-ir="inventario">Inventario</button>
+      <button type="button" data-ir="ajustes">Ajustes</button>
+    </nav>
+  </header>
+
+  <div id="banner-demo" class="banner" hidden>
+    Modo demostración: los datos se guardan solo en este navegador.
+    <button type="button" class="link" data-ir="ajustes">Conectar con Google</button>
+  </div>
+
+  <main>
+    <!-- ============ NUEVA TARJETA ============ -->
+    <section id="v-nueva" class="vista" hidden>
+      <form id="f-tarjeta" novalidate>
+        <div class="color-toggle">
+          <label class="ct ct-roja">
+            <input type="radio" name="color" value="roja" checked>
+            <span><b>Tarjeta roja</b><small>Mantenimiento planificado</small></span>
+          </label>
+          <label class="ct ct-azul">
+            <input type="radio" name="color" value="azul">
+            <span><b>Tarjeta azul</b><small>Mantenimiento autónomo</small></span>
+          </label>
+        </div>
+
+        <div class="cabecera">
+          <div class="cab-titulo">Pilar del <b id="pilar">Mantenimiento planificado</b></div>
+          <div class="cab-nums">
+            <div><span>Tarjeta N°</span><b>Automático</b></div>
+            <div><span>Aviso N°</span><b>Automático</b></div>
+            <div><span>Fecha y hora</span><b id="reloj"></b></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="campo">
+            <label>¿Qué requiere el equipo? *</label>
+            <div id="t-clasif" class="pills pills-col"></div>
+            <p id="hint-clasif" class="hint" hidden></p>
+          </div>
+
+          <div class="grid">
+            <div class="campo"><label for="t-area">Área *</label><select id="t-area"></select></div>
+            <div class="campo" hidden><label for="t-ubicacion">Hangar / ubicación *</label><select id="t-ubicacion"></select></div>
+            <div class="campo"><label for="t-linea">Línea</label><input id="t-linea" autocomplete="off"></div>
+            <div class="campo">
+              <label for="t-equipo">Equipo *</label>
+              <input id="t-equipo" list="dl-equipos" placeholder="Escriba o elija del inventario" autocomplete="off">
+              <datalist id="dl-equipos"></datalist>
+              <small id="t-activo" class="vinculo" hidden></small>
+            </div>
+            <div class="campo"><label for="t-sub">Sub-equipo</label><input id="t-sub" autocomplete="off"></div>
+            <div class="campo"><label for="t-paso">Paso autónomo</label><select id="t-paso"></select></div>
+            <div class="campo"><label for="t-reporta">Reportado por *</label><input id="t-reporta" autocomplete="name"></div>
+            <div class="campo"><label>Prioridad *</label><div id="t-prio" class="pills pills-abc"></div></div>
+          </div>
+
+          <div class="campo">
+            <label>Tipo de anormalidad *</label>
+            <div id="t-anorm" class="pills pills-grid"></div>
+          </div>
+
+          <div class="campo">
+            <label for="t-desc">Descripción del problema *</label>
+            <textarea id="t-desc" rows="4" placeholder="¿Qué se observa? ¿Dónde? ¿Desde cuándo?"></textarea>
+          </div>
+
+          <div class="campo">
+            <label for="t-foto">Foto del equipo / anormalidad</label>
+            <label class="foto-btn">
+              <input id="t-foto" type="file" accept="image/*">
+              <span>📷 Tomar o elegir foto</span>
+            </label>
+            <div id="t-foto-prev" class="foto-prev"></div>
+          </div>
+
+          <button id="btn-guardar-tarjeta" class="btn btn-grande">Guardar tarjeta</button>
+          <p class="nota centro">Al guardar se asignan los números de tarjeta y aviso, y se genera la imagen de la ficha.</p>
+        </div>
+      </form>
+    </section>
+
+    <!-- ============ LISTADO TARJETAS ============ -->
+    <section id="v-tarjetas" class="vista" hidden>
+      <div id="resumen-tarjetas" class="stats"></div>
+      <div class="filtros">
+        <input id="ft-buscar" type="search" placeholder="Buscar tarjeta, aviso, equipo…">
+        <select id="ft-color"><option value="">Rojas y azules</option><option>Roja</option><option>Azul</option></select>
+        <select id="ft-estado"><option value="">Todos los estados</option><option>Abierta</option><option>Cerrada</option></select>
+        <button type="button" id="btn-recargar" class="btn sec">Actualizar</button>
+      </div>
+      <div id="lista-tarjetas" class="lista"></div>
+    </section>
+
+    <!-- ============ INVENTARIO ============ -->
+    <section id="v-inventario" class="vista" hidden>
+      <div class="segmento">
+        <button type="button" data-inv="registro">Registrar activo</button>
+        <button type="button" data-inv="lista">Listado</button>
+      </div>
+
+      <form id="f-activo" novalidate>
+        <div id="inv-registro" class="panel">
+          <p class="nota">El código del activo se genera automáticamente al guardar (ej. SDA-TAL-0001).</p>
+          <div class="grid">
+            <div class="campo"><label for="i-area">Área *</label><select id="i-area"></select></div>
+            <div class="campo" hidden><label for="i-ubicacion">Hangar / ubicación *</label><select id="i-ubicacion"></select></div>
+            <div class="campo"><label for="i-linea">Línea / proceso</label><input id="i-linea" autocomplete="off"></div>
+            <div class="campo"><label for="i-nombre">Nombre del equipo *</label><input id="i-nombre" autocomplete="off"></div>
+            <div class="campo"><label for="i-tipo">Tipo</label><select id="i-tipo"></select></div>
+            <div class="campo"><label for="i-marca">Marca</label><input id="i-marca" autocomplete="off"></div>
+            <div class="campo"><label for="i-modelo">Modelo</label><input id="i-modelo" autocomplete="off"></div>
+            <div class="campo"><label for="i-serie">Serie</label><input id="i-serie" autocomplete="off"></div>
+            <div class="campo"><label for="i-anio">Año</label><input id="i-anio" inputmode="numeric" maxlength="4"></div>
+            <div class="campo">
+              <label for="i-capacidad">Capacidad / potencia</label>
+              <div class="con-unidad">
+                <input id="i-capacidad" inputmode="decimal" placeholder="ej. 37">
+                <select id="i-unidad" aria-label="Unidad"></select>
+              </div>
+              <small class="ayuda">Potencia en kW (estándar internacional); si la placa dice HP, use HP. Capacidad de carga en t.</small>
+            </div>
+            <div class="campo"><label for="i-estado">Estado *</label><select id="i-estado"></select></div>
+            <div class="campo"><label for="i-responsable">Responsable</label><input id="i-responsable"></div>
+          </div>
+          <div class="campo">
+            <label>Criticidad</label>
+            <div id="i-crit" class="pills pills-crit"></div>
+          </div>
+          <div class="campo"><label for="i-obs">Observaciones</label><textarea id="i-obs" rows="3"></textarea></div>
+          <div class="campo">
+            <label for="i-foto">Foto del equipo / placa</label>
+            <label class="foto-btn">
+              <input id="i-foto" type="file" accept="image/*">
+              <span>📷 Tomar o elegir foto</span>
+            </label>
+            <div id="i-foto-prev" class="foto-prev"></div>
+          </div>
+          <button id="btn-guardar-activo" class="btn btn-grande">Guardar activo</button>
+        </div>
+      </form>
+
+      <div id="inv-lista" hidden>
+        <div id="inv-resumen" class="estados-resumen"></div>
+        <div class="filtros">
+          <input id="fi-buscar" type="search" placeholder="Buscar código, nombre, marca, serie…">
+          <select id="fi-area"></select>
+          <select id="fi-estado"></select>
+        </div>
+        <p id="inv-cuenta" class="nota"></p>
+        <div id="lista-inv" class="lista"></div>
+      </div>
+    </section>
+
+    <!-- ============ AJUSTES ============ -->
+    <section id="v-ajustes" class="vista" hidden>
+      <form id="f-ajustes" class="panel">
+        <h2>Conexión con Google</h2>
+        <p id="a-estado" class="nota"></p>
+        <div class="campo">
+          <label for="a-url">URL de la aplicación web (Apps Script)</label>
+          <input id="a-url" type="url" placeholder="https://script.google.com/macros/s/…/exec">
+        </div>
+        <div class="campo">
+          <label for="a-clave">Clave de acceso</label>
+          <input id="a-clave" type="password" autocomplete="current-password">
+        </div>
+        <div class="campo">
+          <label for="a-nombre">Mi nombre (para "Reportado por")</label>
+          <input id="a-nombre" autocomplete="name">
+        </div>
+        <div class="acciones">
+          <button type="button" id="btn-probar" class="btn sec">Probar conexión</button>
+          <button class="btn">Guardar ajustes</button>
+        </div>
+      </form>
+      <div class="panel">
+        <h2>Servidor de la empresa</h2>
+        <p class="nota">Este link es solo para capturar en campo. Lo que se guarda aquí lo copia automáticamente el servidor de SODIACERO cada pocos minutos y se consulta en la app de escritorio (menú <b>Captura móvil</b>).</p>
+        <p class="nota"><a href="sig/">Sistema integral en línea (versión anterior)</a></p>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottomnav">
+    <button type="button" data-ir="nueva"><span>＋</span>Tarjeta</button>
+    <button type="button" data-ir="tarjetas"><span>▤</span>Tarjetas</button>
+    <button type="button" data-ir="inventario"><span>⚙</span>Inventario</button>
+    <button type="button" data-ir="ajustes"><span>☰</span>Ajustes</button>
+  </nav>
+
+  <dialog id="dlg">
+    <button type="button" class="dlg-x" data-cerrar aria-label="Cerrar">×</button>
+    <div id="dlg-body"></div>
+  </dialog>
+  <div id="toast" class="toast" role="status"></div>
+  <div id="render-host" aria-hidden="true"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="config.js"></script>
+  <script src="api.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

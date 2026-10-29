@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#263238"/>
+  <rect x="96" y="120" width="200" height="280" rx="22" fill="#1565c0" transform="rotate(-8 196 260)"/>
+  <rect x="216" y="112" width="200" height="280" rx="22" fill="#c62828" transform="rotate(6 316 252)"/>
+  <text x="318" y="290" font-family="Arial, Helvetica, sans-serif" font-size="96" font-weight="800" fill="#fff" text-anchor="middle" transform="rotate(6 316 252)">TPM</text>
+</svg>
