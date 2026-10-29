@@ -1,0 +1,13 @@
+{
+  "name": "SODIACERO Campo",
+  "short_name": "SODIACERO",
+  "description": "Captura en campo: tarjetas TPM e inventario de equipos",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eef1f4",
+  "theme_color": "#263238",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
